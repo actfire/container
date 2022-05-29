@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+yum update
+
+# 安裝 git
+yum install git -y
+
 # 安裝 nginx
 yum install epel-release -y
 yum install nginx -y
