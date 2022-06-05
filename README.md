@@ -12,8 +12,9 @@
         └── Centos8_Jenkins
             ├── Vagrantfile
             ├── html                # 對應虛擬機的web目錄
-            ├── nginx               # 對應虛擬機的nginx conf目錄
-            └── run_script.sh
+            ├── install_jenkins.sh  # 安裝 Jenkins 腳本
+            ├── install_nginx.sh    # 安裝 Nginx 腳本
+            └── nginx               # 對應虛擬機的nginx conf目錄
 
 ### vagrant 常用指令
 
