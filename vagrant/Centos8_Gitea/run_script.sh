@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# 校時
+timedatectl set-timezone Asia/Taipei
+hwclock -w
+
 # 安裝 git
 dnf install git
 

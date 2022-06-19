@@ -71,6 +71,10 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
 
+    # 校時
+    sudo timedatectl set-timezone Asia/Taipei
+    sudo hwclock -w
+
     # CentOS Linux 8 已于 2021 年 12 月 31 日到达生命的尽头(EOL)。
     # 这意味着 CentOS 8 将不再从官方 CentOS 项目获得开发资源。
     # 在 2021 年 12月 31 日之后，如果需要更新你的 CentOS，需要将镜像更改到 vault.centos.org，在那里它们将被永久存档。
