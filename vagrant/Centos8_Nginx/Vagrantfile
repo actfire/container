@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "boxomatic/centos-8"
+
+  config.vm.network "public_network"
+  # config.vm.network "private_network", ip: "192.168.56.10"
+
+  config.vm.synced_folder "./nginx", "/etc/nginx"
+  config.vm.synced_folder "./html", "/usr/share/nginx/html"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.cpus = "2"
+    vb.memory = "2048"
+  end
+
+  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+
+    # 校時
+    sudo timedatectl set-timezone Asia/Taipei
+    sudo hwclock -w
+
+    # CentOS Linux 8 已于 2021 年 12 月 31 日到达生命的尽头(EOL)。
+    # 这意味着 CentOS 8 将不再从官方 CentOS 项目获得开发资源。
+    # 在 2021 年 12月 31 日之后，如果需要更新你的 CentOS，需要将镜像更改到 vault.centos.org，在那里它们将被永久存档。
+
+    cd /etc/yum.repos.d/
+    sudo sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+    sudo sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
+    sudo yum update
+
+  SHELL
+
+  # 腳本安裝 nginx
+  config.vm.provision :shell, path: "install_nginx.sh", privileged: false
+
+end
