@@ -1,0 +1,24 @@
+version: '3.9'
+
+volumes:
+  jenkins-home:
+
+networks:
+  jenkins:
+
+services:
+  jenkins:
+    container_name: jenkins_DooD
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    networks:
+      - jenkins
+    environment:
+      JAVA_OPTS: '-Djava.awt.headless=true' # Headless模式是系统的一种配置模式。在该模式下，系统缺少了显示设备、键盘或鼠标。
+    restart: unless-stopped
+    ports:
+      - '8089:8080'
+    volumes:
+      - jenkins-home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
