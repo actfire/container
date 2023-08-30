@@ -9,4 +9,22 @@ RUN add-apt-repository \
    stable"
 RUN apt-get update  -qq \
     && apt-get -y install docker-ce
+
+RUN jenkins-plugin-cli --plugins \
+    workflow-multibranch:756.v891d88f2cd46 \
+    conditional-buildstep:1.4.3 \
+    publish-over-ssh:1.25 \
+    build-user-vars-plugin:1.9 \
+    pipeline-stage-view:2.33 \
+    cloudbees-folder:6.848.ve3b_fd7839a_81 \
+    generic-webhook-trigger:1.87.0 \
+    nodejs:1.6.1 \
+    pipeline-utility-steps:2.16.0 \
+    http_request:1.18 \
+    pipeline-stage-step:305.ve96d0205c1c6 \
+    ws-cleanup:0.45 \
+    git:5.2.0
+
 RUN usermod -aG docker jenkins
+
+USER jenkins
