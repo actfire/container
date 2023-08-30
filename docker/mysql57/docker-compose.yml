@@ -1,0 +1,22 @@
+version: "3"
+services:
+  mysql5.7:
+    image: mysql:5.7.43
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1000M
+    container_name: mysql_5.7.43
+    ports:
+      - 13307:3306
+    environment:
+      - MYSQL_DATABASE=testdb
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=0000
+      - MYSQL_ROOT_PASSWORD=test
+      - TZ=Asia/Taipei
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci #設置utf8字符集
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./deploy/sql/:/docker-entrypoint-initdb.d/ # 初始化的腳本，若 ./__data/mysql/ 文件夾存在數據，則不會執行初始化腳本
