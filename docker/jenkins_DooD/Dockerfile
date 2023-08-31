@@ -23,7 +23,8 @@ RUN jenkins-plugin-cli --plugins \
     http_request:1.18 \
     pipeline-stage-step:305.ve96d0205c1c6 \
     ws-cleanup:0.45 \
-    git:5.2.0
+    git:5.2.0 \
+    docker-workflow:572.v950f58993843
 
 RUN usermod -aG docker jenkins
 
