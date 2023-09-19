@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+</head>
+
+<body>
+    Hello World
+    <hr>
+    <button id="btn">Get API data</button>
+    <script>
+        const btn = document.getElementById('btn');
+        btn.onclick = function () {
+            fetch('http://api.mysite.com.tw:88/smee', {
+                method: 'GET',
+                // headers: { 'Content-Type': 'application/json' },
+            }).then(res => {
+                return res.text();
+                // return res.formData();
+                // return res.blob();
+                // return res.arrayBuffer();
+                // return res.json();
+            }).then(res => {
+                console.log('res:', res);
+            });
+        };
+    </script>
+</body>
+
+</html>
