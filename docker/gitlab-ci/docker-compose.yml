@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+  GitLab-Server:
+    image: 'gitlab/gitlab-ce:latest'
+    container_name: GitLab-Server
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://127.0.0.1:5080/'
+        nginx['listen_port'] = 80
+        gitlab_rails['gitlab_shell_ssh_port'] = 5022
+    ports:
+      - 5080:80
+      - 5443:443
+      - '5022:22'
+    privileged: true
+    volumes:
+      - gitlabconfig:/etc/gitlab
+      - data:/var/opt/gitlab
+      - gitlablog:/var/log/gitlab
+    shm_size: '256m'
+    networks:
+      default:
+        ipv4_address: 172.27.0.2
+    # restart: always
+  GitLab-Runner:
+    image: gitlab/gitlab-runner:latest
+    container_name: GitLab-Runner
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./GitLab-Runner/Config:/etc/gitlab-runner
+    networks:
+      default:
+        ipv4_address: 172.27.0.3
+    # restart: always
+volumes:
+  gitlabconfig:
+  gitlablog:
+  data:
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.27.0.0/16
+          gateway: 172.27.0.1
