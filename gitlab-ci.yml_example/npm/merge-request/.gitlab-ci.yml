@@ -1,0 +1,108 @@
+# TODO: 限定 main 分支
+# TODO: 必須是要是 after merge request 通過後
+# TODO: 成功或失敗 跑副程式(通知)
+
+default:
+  image: node:16.20.2
+  tags:
+    - docker
+  # cache:
+  #   key:
+  #     files:
+  #       - pnpm-lock.yaml
+  #   paths:
+  #     - .pnpm-store
+  #   policy: pull
+  # before_script:
+  #   - corepack enable
+  #   - corepack prepare pnpm@latest-8 --activate
+  #   - pnpm config set store-dir .pnpm-store
+
+# 官方默認預定義的5個階段（按順序）：.pre、build、test、deploy、.post
+stages:
+  # - show-All-Env
+  # - show-Env
+  - build
+  - test
+
+# global variable
+variables:
+  TEST_VAR: 'Hello World!'
+
+
+# 如果您想在建立合併請求時以及合併到主分支後運行管道
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    # - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"
+
+# 可復用的任務
+.notify_sh:
+  after_script:
+    - echo 'send notify 🔥🔥🔥'
+
+# job_1:
+#   # image & tags 可定義在全局
+#   # image: node:16.20.2
+#   # tags:
+#   #   - docker
+#   stage: show-All-Env
+#   script:
+#     - |
+#       echo ======================= all env ===============================
+#       env
+
+# job_2:
+#   # image: node:16.20.2
+#   # tags:
+#   #   - docker
+#   stage: show-Env
+#   script:
+#     - |
+#       echo ======================= custom env ===============================
+#       echo "TEST_VAR > $TEST_VAR"
+#       echo "CI_PROJECT_NAMESPACE > $CI_PROJECT_NAMESPACE"
+
+job_build:
+  # extends: .notify_sh
+  stage: build
+  only:
+    - main
+  cache:
+    key:
+      files:
+        - package-lock.json
+      prefix: npm
+    paths:
+      - node_modules/
+    policy: pull
+  script:
+    - |
+      npm i
+      npm run build
+  artifacts:
+    paths:
+      - dist
+
+job_on_success:
+  stage: test
+  only:
+    - main
+  needs: ["job_build"]
+  when: on_success
+  script:
+    - echo 'success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+
+job_on_fail:
+  stage: test
+  only:
+    - main
+  needs: ["job_build"]
+  when: on_failure
+  script:
+    - echo 'fail !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+
+# CI 變數說明
+# https://docs.gitlab.cn/jh/ci/variables/predefined_variables.html
+# CI 變數重點 CI_MERGE_REQUEST_EVENT_TYPE 
