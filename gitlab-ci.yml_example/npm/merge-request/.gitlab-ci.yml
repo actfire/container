@@ -20,8 +20,6 @@ default:
 
 # 官方默認預定義的5個階段（按順序）：.pre、build、test、deploy、.post
 stages:
-  # - show-All-Env
-  # - show-Env
   - build
   - test
 
@@ -42,27 +40,12 @@ workflow:
   after_script:
     - echo 'send notify 🔥🔥🔥'
 
-# job_1:
-#   # image & tags 可定義在全局
-#   # image: node:16.20.2
-#   # tags:
-#   #   - docker
-#   stage: show-All-Env
-#   script:
-#     - |
-#       echo ======================= all env ===============================
-#       env
-
-# job_2:
-#   # image: node:16.20.2
-#   # tags:
-#   #   - docker
-#   stage: show-Env
-#   script:
-#     - |
-#       echo ======================= custom env ===============================
-#       echo "TEST_VAR > $TEST_VAR"
-#       echo "CI_PROJECT_NAMESPACE > $CI_PROJECT_NAMESPACE"
+pre-job:
+  stage: .pre
+  script:
+    - |
+      echo ======================= all env ===============================
+      env
 
 job_build:
   # extends: .notify_sh
@@ -84,6 +67,7 @@ job_build:
   artifacts:
     paths:
       - dist
+    expire_in: 30 mins
 
 job_on_success:
   stage: test
@@ -102,6 +86,11 @@ job_on_fail:
   when: on_failure
   script:
     - echo 'fail !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'
+
+last-job:
+  stage: .post
+  script:
+    - echo "This job runs in the .post stage, after all other stages."
 
 # CI 變數說明
 # https://docs.gitlab.cn/jh/ci/variables/predefined_variables.html
