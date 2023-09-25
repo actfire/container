@@ -15,6 +15,7 @@ services:
       - '5022:22'
     privileged: true
     volumes:
+      # 這邊最好都是用 volumes, 不確定那一個一定要用, 因為會造成內部 posgresql 啟動時錯誤
       - gitlabconfig:/etc/gitlab
       - data:/var/opt/gitlab
       - gitlablog:/var/log/gitlab
