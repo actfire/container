@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  pm2Apps:
+    image: keymetrics/pm2:18-buster
+    container_name: apps
+    restart: unless-stopped
+    stop_signal: SIGINT
+    working_dir: /apps
+    volumes:
+      - ./apps:/apps
+    ports:
+      - '3000:3000'
