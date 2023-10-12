@@ -9,5 +9,3 @@ services:
     working_dir: /apps
     volumes:
       - ./apps:/apps
-    ports:
-      - '3000:3000'

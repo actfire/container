@@ -1,0 +1,28 @@
+version: '3.8'
+
+volumes:
+  my-jenkins-home:
+
+services:
+  jenkins:
+    image: actspace/myjenkins:0.0.1
+    container_name: my_jenkins
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    environment:
+      JAVA_OPTS: '-Xms512m -Xmx1024m -Djava.awt.headless=true'
+    restart: unless-stopped
+    ports:
+      - '8888:8080'
+    volumes:
+      - my-jenkins-home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+# JAVA_OPTS: '-server -Xms1024m -Xmx2048m -Djava.awt.headless=true'
+# Headless模式是系统的一种配置模式。在该模式下，系统缺少了显示设备、键盘或鼠标。
+# -server:一定要作为第一个参数，在多个CPU时性能佳
+# -Xms：初始Heap大小，使用的最小内存,cpu性能高时此值应设的大一些
+# -Xmx：java heap最大值，使用的最大内存
+# 上面两个值是分配JVM的最小和最大内存，取决于硬件物理内存的大小，建议均设为物理内存的一半。
