@@ -16,7 +16,7 @@ const server = http.createServer(function (req, res) {
             res.end();
             return;
         }
-        cases[req.url](req, res);
+        cases[req.url.split('?')[0]](req, res);
     } else {
         res.end('Invalid Request!');
     }
@@ -62,11 +62,26 @@ process.on('message', (msg) => {
 function turnOff(type) {
     console.log('要停機了!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     console.log(type + ' signal received: closing HTTP server');
-    server.close(() => {
-        console.log('HTTP server closed');
-        process.exit(0);
-        // process.exit(err ? 1 : 0);
+    server.destroy();
+}
+
+function enableDestroy(svr, closeMsg) {
+    var connections = {}
+
+    svr.on('connection', function (conn) {
+        var key = conn.remoteAddress + ':' + conn.remotePort;
+        connections[key] = conn;
+        conn.on('close', function () {
+            delete connections[key];
+        });
     });
+
+    svr.destroy = function (cb) {
+        svr.close(cb);
+        console.log(closeMsg);
+        for (var key in connections)
+            connections[key].destroy();
+    };
 }
 
 const port = process.env.PORT || 5000;
@@ -77,3 +92,5 @@ server.listen(port, '0.0.0.0', function (err) {
     }
     console.log('server listen at: ', port);
 });
+
+enableDestroy(server, 'HTTP server closed');
