@@ -10,7 +10,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1024M # 不夠再改 2048M
+          memory: 1024M # 如果要看網頁或寫code, 那最好改到 2048M 以上
     restart: unless-stopped
     ports:
       - '6080:80'
