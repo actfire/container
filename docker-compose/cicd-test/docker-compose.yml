@@ -1,0 +1,89 @@
+version: '3.8'
+
+volumes:
+  my-jenkins-home:
+
+services:
+
+  # GitLab Runner
+  GitLab-Runner:
+    image: gitlab/gitlab-runner:latest
+    container_name: GitLab-Runner
+    privileged: true # 允許在docker容器中啓動docker容器
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./GitLab-Runner-Config:/etc/gitlab-runner
+
+  # File Storage (SSH Server)
+  file-storage:
+    image: actspace/my-sshd:0.0.1
+    container_name: file-storage
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024M
+    restart: unless-stopped
+    ports:
+      - '2222:22'
+
+  # Nuxt Server (Linux with novnc and node.js<PM2>)
+  nuxt-server:
+    image: actspace/my-webtop:0.0.5
+    container_name: nuxt-server
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+    restart: unless-stopped
+    ports:
+      - '9090:9090'
+      - '3000:3000'
+      - '10022:22'
+    environment:
+      - TZ=Asia/Taipei
+      # - ROOTPWD=oiceuthn
+      # - VNCPWD=oiceuthn
+      # - VNCDISPLAY=1280x720
+
+  # Jenkins (use for backup file<git and sql>)
+  my-jenkins:
+    image: actspace/myjenkins:0.0.1
+    container_name: my-jenkins
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+    environment:
+      JAVA_OPTS: '-Xms512m -Xmx1024m -Djava.awt.headless=true'
+    restart: unless-stopped
+    ports:
+      - '8888:8080'
+    volumes:
+      - my-jenkins-home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # MySQL (for backend)
+  mysql5.7:
+    image: mysql:5.7.43
+    container_name: mysql_5.7.43
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1000M
+    restart: unless-stopped
+    ports:
+      - 13307:3306
+    environment:
+      - MYSQL_DATABASE=testdb
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=0000
+      - MYSQL_ROOT_PASSWORD=test
+      - TZ=Asia/Taipei
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci #設置utf8字符集
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./deploy/sql/:/docker-entrypoint-initdb.d/ # 初始化的腳本，若 ./__data/mysql/ 文件夾存在數據，則不會執行初始化腳本
