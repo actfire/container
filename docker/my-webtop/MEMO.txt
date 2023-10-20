@@ -1,1 +1,11 @@
 docker build . -t actspace/my-webtop:[version]
+
+TODO: 待優化
+    針對(DEBIAN_FRONTEND=noninteractive)
+        參考: https://goodmemory.cc/how-to-use-debian_frontend-noninteractive/
+        參考: https://juejin.cn/post/6921249037966376968
+            如果只在構建過程中需要環境變量，而不是在最終鏡像中，請考慮為單個命令設置一個值：
+            RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y ...
+            或者使用 ARG，它不會在最終鏡像中持久存在：
+            ARG DEBIAN_FRONTEND=noninteractive
+            RUN apt-get update && apt-get install -y ...
