@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  my-test:
+    image: actspace/my-test:0.1.3
+    container_name: my-test
+    # restart: unless-stopped
+    environment:
+      - SSH_USER_foo=foo
+      - SSH_GROUP_foo=dev
+      - SSH_PASS_foo=pass123
+      
+      - SSH_USER_bar=bar
+      - SSH_GROUP_bar=test 
+      - SSH_PASS_bar=pass456
+    volumes:
+      - ./apps:/apps
+      - ./ssh/foo:/home/foo/.ssh
+      - ./ssh/bar:/home/bar/.ssh
+    ports:
+      - '2222:22'
+      - '3000:3000'
