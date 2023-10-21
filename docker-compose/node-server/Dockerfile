@@ -45,7 +45,7 @@ RUN set -uex; \
 EXPOSE 22
 EXPOSE 80
 EXPOSE 443
-EXPOSE 3000
+EXPOSE 3000-3999
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/sbin/sshd","-D"]

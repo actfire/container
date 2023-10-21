@@ -29,23 +29,24 @@ services:
 
   # Nuxt Server (Linux with novnc and node.js<PM2>)
   nuxt-server:
-    image: actspace/my-webtop:0.0.5
-    container_name: nuxt-server
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1024M
-    restart: unless-stopped
-    ports:
-      - '9090:9090'
-      - '3000:3000'
-      - '10022:22'
+    image: actspace/my-test:0.1.4
+    container_name: my-test
+    # restart: unless-stopped
     environment:
-      - TZ=Asia/Taipei
-      # - ROOTPWD=oiceuthn
-      # - VNCPWD=oiceuthn
-      # - VNCDISPLAY=1280x720
+      - SSH_USER_foo=foo
+      - SSH_GROUP_foo=dev
+      - SSH_PASS_foo=pass123
+      
+      - SSH_USER_bar=bar
+      - SSH_GROUP_bar=test 
+      - SSH_PASS_bar=pass456
+    volumes:
+      - ./apps:/apps
+      - ./ssh/foo:/home/foo/.ssh
+      - ./ssh/bar:/home/bar/.ssh
+    ports:
+      - '2222:22'
+      - '3000:3000'
 
   # Jenkins (use for backup file<git and sql>)
   my-jenkins:
