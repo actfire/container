@@ -1,0 +1,18 @@
+[
+    {
+        "name": "app1",
+        "script": "./app1/index.js",
+        "shutdown_with_message": true,
+        "exec_mode": "fork",
+        "watch": false,
+        "max_memory_restart": "300M",
+        "cron_restart": "0 8,9,10,11,12,13,14,15,16,17,18 * * *",
+        "log_date_format": "YYYY-MM-DD HH:mm Z",
+        "out_file": "./logs/out.log",
+        "error_file": "./logs/err.log",
+        "merge_logs": true,
+        "env": {
+            "PORT": 3000
+        }
+    }
+]

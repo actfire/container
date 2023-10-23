@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  my-node-server:
-    image: actspace/my-node-server:0.0.1
-    container_name: my-node-server
+  my-sshder:
+    image: actspace/my-sshder:0.0.5
+    container_name: my-sshder
     # restart: unless-stopped
     environment:
       # first user
@@ -16,8 +16,6 @@ services:
       - SSH_GROUP_2=test 
       - SSH_PASS_2=cytu2369
     volumes:
-      - ./apps:/apps
       - ./home:/home
     ports:
       - '2222:22'
-      - '3000:3000'

@@ -1,0 +1,8 @@
+1. add key
+    ssh-add home/[someone]/.ssh/id_rsa
+
+2. ssh link
+    ssh -o StrictHostKeyChecking=no -p 2222 [someone]@[ip]
+
+3. clear
+    ssh-add -D
