@@ -1,20 +1,15 @@
 version: '3.3'
 services:
   my-webtop:
-    image: actspace/my-webtop:0.0.5
-    container_name: my-webtop
-    restart: unless-stopped
     ports:
-      - '9090:9090'
-      - '10022:22'
-    environment:
-      - TZ=Asia/Taipei
-      # - ROOTPWD=oiceuthn
-      # - VNCPWD=oiceuthn
-      # - VNCDISPLAY=1280x720
-    deploy:
-      resources:
-        limits:
-          memory: 1024M # 如果要看網頁或寫code, 那最好改到 2048M 以上
+      - '5901:5901'
+      - '6901:6901'
+    # environment:
+    #   - TZ=Asia/Taipei
+    #   - ROOTPWD=oiceuthn
+    #   - VNCPWD=oiceuthn
+    #   - VNCDISPLAY=1280x720
     # volumes:
     #   - '${PWD}/root:/root'
+    image: actspace/my-webtop2:0.0.4
+
