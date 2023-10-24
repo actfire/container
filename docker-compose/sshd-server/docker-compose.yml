@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   sshd1:
-    image: actspace/my-sshder:0.0.10
+    image: actspace/my-sshder:0.0.11
     container_name: sshd1
     # restart: unless-stopped
     environment:
@@ -13,15 +13,15 @@ services:
       - ./ssh:/ssh
     ports:
       - '2201:22'
-  sshd2:
-    image: actspace/my-sshder:0.0.10
-    container_name: sshd2
-    # restart: unless-stopped
-    environment:
-      - SSH_USER_1=actfire
-      - SSH_GROUP_1=test 
-      - SSH_PASS_1=oiceuthn
-    volumes:
-      - ./ssh:/ssh
-    ports:
-      - '2202:22'
+  # sshd2:
+  #   image: actspace/my-sshder:0.0.10
+  #   container_name: sshd2
+  #   # restart: unless-stopped
+  #   environment:
+  #     - SSH_USER_1=actfire
+  #     - SSH_GROUP_1=test 
+  #     - SSH_PASS_1=oiceuthn
+  #   volumes:
+  #     - ./ssh:/ssh
+  #   ports:
+  #     - '2202:22'
