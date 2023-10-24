@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   my-node-server:
-    image: actspace/my-node-server:0.0.3
+    image: actspace/my-node-server:0.0.4
     container_name: my-node-server
     # restart: unless-stopped
     environment:

@@ -20,6 +20,7 @@ for user in $(env | grep SSH_USER_); do
 
     ssh-keygen -f /home/$username/.ssh/id_rsa -N '' 
     cat /home/$username/.ssh/id_rsa.pub >> /home/$username/.ssh/authorized_keys
+    echo -e "StrictHostKeyChecking no\nUserKnownHostsFile /dev/null" > /home/$username/.ssh/config
 
     chown -R $username:$group /home/$username/.ssh/*
     chmod 700 /home/$username/.ssh/id_rsa
