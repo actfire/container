@@ -11,3 +11,6 @@ volume 掛載 /ssh 路徑可得到 .ssh 內資料
 
 4. clear ssh key
     ssh-add -D
+
+rsync example(已操作1跟2之後, 在 .ssh/config 內添加 StrictHostKeyChecking no 與 UserKnownHostsFile /dev/null)
+    rsync -vrzh --delete dist/ admin@nodesrv:/home/admin/dist
