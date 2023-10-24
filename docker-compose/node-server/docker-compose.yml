@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   my-node-server:
-    image: actspace/my-node-server:0.0.1
+    image: actspace/my-node-server:0.0.3
     container_name: my-node-server
     # restart: unless-stopped
     environment:
@@ -11,13 +11,13 @@ services:
       - SSH_GROUP_1=dev
       - SSH_PASS_1=oiceuthn
       
-      # second user
-      - SSH_USER_2=actspace
-      - SSH_GROUP_2=test 
-      - SSH_PASS_2=cytu2369
+      # # second user
+      # - SSH_USER_2=actspace
+      # - SSH_GROUP_2=test 
+      # - SSH_PASS_2=cytu2369
     volumes:
       - ./apps:/apps
-      - ./home:/home
+      - ./ssh:/ssh
     ports:
       - '2222:22'
       - '3000:3000'

@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   my-sshder:
-    image: actspace/my-sshder:0.0.5
+    image: actspace/my-sshder:0.0.9
     container_name: my-sshder
     # restart: unless-stopped
     environment:

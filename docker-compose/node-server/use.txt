@@ -1,6 +1,4 @@
 volume 掛載 /ssh 路徑可得到 .ssh 內資料
-需要 ssh-add 加載前，先 chmod 700 id_rsa
-
 
 1. start ssh agent
     ssh-agent bash
