@@ -16,6 +16,6 @@ services:
       - SSH_GROUP_2=test 
       - SSH_PASS_2=cytu2369
     volumes:
-      - ./home:/home
+      - ./ssh:/ssh
     ports:
       - '2222:22'

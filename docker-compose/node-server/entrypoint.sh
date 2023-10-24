@@ -21,6 +21,12 @@ for user in $(env | grep SSH_USER_); do
     chown -R $username:$group /home/$username/.ssh
     chmod 700 /home/$username/.ssh
     chmod 600 /home/$username/.ssh/authorized_keys
+
+    echo "%$group ALL=(ALL) ALL" >> /etc/sudoers
+
+    # 管理用, 非必要
+    mkdir -p /ssh/$username
+    cp -r /home/$username/.ssh/* /ssh/$username
   fi
   
   index=$(expr $index + 1)
