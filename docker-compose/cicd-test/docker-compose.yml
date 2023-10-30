@@ -15,51 +15,46 @@ services:
       - ./GitLab-Runner-Config:/etc/gitlab-runner
 
   # File Storage (SSH Server)
-  file-storage:
-    image: actspace/my-sshd:0.0.1
-    container_name: file-storage
+  file-server:
+    image: actspace/my-sshder:0.0.11
+    container_name: file-server
+    restart: unless-stopped
     deploy:
       resources:
         limits:
           cpus: '0.50'
-          memory: 1024M
-    restart: unless-stopped
+          memory: 500M
     ports:
-      - '2222:22'
+      - '2022:22'
 
-  # Nuxt Server (Linux with novnc and node.js<PM2>)
-  nuxt-server:
-    image: actspace/my-test:0.1.4
-    container_name: my-test
-    # restart: unless-stopped
+  # node Server (Linux with novnc and node.js<PM2>)
+  node-server:
+    image: actspace/my-node-server:0.0.5
+    container_name: node-server
+    restart: unless-stopped
     environment:
-      - SSH_USER_foo=foo
-      - SSH_GROUP_foo=dev
-      - SSH_PASS_foo=pass123
-      
-      - SSH_USER_bar=bar
-      - SSH_GROUP_bar=test 
-      - SSH_PASS_bar=pass456
+      - SSH_USER_1=admin
+      - SSH_GROUP_1=admin
+      - SSH_PASS_1=oiceuthn
     volumes:
       - ./apps:/apps
-      - ./ssh/foo:/home/foo/.ssh
-      - ./ssh/bar:/home/bar/.ssh
+      - ./ssh:/ssh
     ports:
-      - '2222:22'
+      - '2122:22'
       - '3000:3000'
 
   # Jenkins (use for backup file<git and sql>)
   my-jenkins:
     image: actspace/myjenkins:0.0.1
     container_name: my-jenkins
+    restart: unless-stopped
     deploy:
       resources:
         limits:
           cpus: '1'
-          memory: 1024M
+          memory: 768M
     environment:
       JAVA_OPTS: '-Xms512m -Xmx1024m -Djava.awt.headless=true'
-    restart: unless-stopped
     ports:
       - '8888:8080'
     volumes:
@@ -70,12 +65,12 @@ services:
   mysql5.7:
     image: mysql:5.7.43
     container_name: mysql_5.7.43
+    restart: unless-stopped
     deploy:
       resources:
         limits:
           cpus: '0.50'
           memory: 1000M
-    restart: unless-stopped
     ports:
       - 13307:3306
     environment:
