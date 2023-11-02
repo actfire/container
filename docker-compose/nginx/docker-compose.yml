@@ -5,10 +5,10 @@ services:
     image: nginx:1.25.2
     hostname: nginx
     container_name: nginx_proxy
-    restart: unless-stopped
+    # restart: unless-stopped
     volumes:
       - ./www-data:/var/www # place your files for web here
       - ./nginx-conf:/etc/nginx/conf.d # place provided nginx.conf here
       - ./logs:/var/log/nginx
     ports:
-      - 88:80
+      - 8000:80
