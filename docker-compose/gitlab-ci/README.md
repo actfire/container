@@ -2,6 +2,10 @@
 
 - [參考](https://docs.gitlab.cn/omnibus/settings/memory_constrained_envs.html)進行適度調整
 
+### 初始密碼
+
+- 路徑: /etc/gitlab/initial_root_password
+
 ### volumes 在不同作業系統上的設定
 
 - 建議在 windows 上不要做本機路徑映射, 直接 volumes 容器對應, 否則在 GitLab 啟動後, 會一直噴檔案限權的 warning

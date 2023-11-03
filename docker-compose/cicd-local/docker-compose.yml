@@ -8,7 +8,7 @@ services:
       - 'gitlab.me:172.27.0.2'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://gitlab.me:5080/'
+        external_url 'http://172.16.100.56:5080/'
         nginx['listen_port'] = 80
         gitlab_rails['gitlab_shell_ssh_port'] = 5022
     ports:
@@ -21,24 +21,16 @@ services:
       - data:/var/opt/gitlab
       - gitlablog:/var/log/gitlab
     shm_size: '256m'
-    networks:
-      default:
-        ipv4_address: 172.27.0.2
-    # restart: always
   
   GitLab-Runner:
     image: gitlab/gitlab-runner:latest
     container_name: GitLab-Runner
-    extra_hosts:
-      - 'gitlab.me:172.27.0.2' # 有固定環境的話，可以用
+    # extra_hosts:
+    #   - 'gitlab.me:172.16.100.56' # 有固定環境的話，可以用
     privileged: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./Runner/Config:/etc/gitlab-runner
-    networks:
-      default:
-        ipv4_address: 172.27.0.3
-    # restart: always
     depends_on:
       - GitLab-Server
 
@@ -149,11 +141,3 @@ volumes:
   data:
   my-jenkins-home:
 
-networks:
-  default:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.27.0.0/16
-          gateway: 172.27.0.1

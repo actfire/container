@@ -6,12 +6,12 @@ shutdown_timeout = 0
   session_timeout = 1800
 
 [[runners]]
-  name = "0d9b3f00abd1"
-  url = "http://172.16.100.56:5080"
-  clone_url = "http://172.16.100.56:5080"
-  id = 2
-  token = "glrt-kHJqZ3xXRb1Jag6xS94z"
-  token_obtained_at = 2023-11-03T08:43:12Z
+  name = "5393e852bf87"
+  url = "http://192.168.88.158:5080"
+  clone_url = "http://192.168.88.158:5080"
+  id = 3
+  token = "glrt-gmczPxx6rHdPMk2xCFQv"
+  token_obtained_at = 2023-11-02T16:04:20Z
   token_expires_at = 0001-01-01T00:00:00Z
   executor = "docker"
   [runners.cache]
