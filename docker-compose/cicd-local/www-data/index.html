@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 🔥🔥🔥 meta 設定快取沒什麼用了, 現代瀏覽器都看 response header 🔥🔥🔥 -->
+    <!-- <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" /> -->
+    <!-- <meta http-equiv="Pragma" content="no-cache" /> -->
+    <!-- <meta http-equiv="Expires" content="-1" /> -->
+    <!-- <meta http-equiv="Cache" content="no-cache"> -->
+    <title>Home Page</title>
+</head>
+
+<body>
+    Hello World
+    <hr>
+    <button id="btn">Get API data</button>
+    <script>
+        const btn = document.getElementById('btn');
+        btn.onclick = function () {
+            // fetch get example.
+            fetchGet();
+            // fetch post example
+
+
+
+        };
+
+        async function fetchGet() {
+            const data = {
+                id: 1,
+                name: 'Andersen'
+            };
+            const url = new URL('http://localhost:8000/api/test');
+
+            Object.keys(data).forEach(function (key, idx, arr) {
+                url.searchParams.append(key, data[key]);
+            });
+
+            const res = await (await fetch(url)).json();
+
+            console.log('res: ', res);
+
+            // fetch(url).then(res => res.text()).then(res => {
+            //     console.log('res: ', res);
+            // });
+        }
+
+        function fetchPost() {
+            
+            /** @type {RequestInit } */
+            const config = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: 1, name: 'Gefanxe' })
+            };
+
+            fetch('/api/test', config).then(res => {
+                return res.json();
+            }).then(res => {
+                console.log('res:', res);
+            });
+        }
+    </script>
+</body>
+
+</html>

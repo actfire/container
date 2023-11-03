@@ -1,0 +1,29 @@
+concurrent = 1
+check_interval = 0
+shutdown_timeout = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "5393e852bf87"
+  url = "http://192.168.88.158:5080"
+  clone_url = "http://192.168.88.158:5080"
+  id = 3
+  token = "glrt-gmczPxx6rHdPMk2xCFQv"
+  token_obtained_at = 2023-11-02T16:04:20Z
+  token_expires_at = 0001-01-01T00:00:00Z
+  executor = "docker"
+  [runners.cache]
+    MaxUploadedArchiveSize = 0
+  [runners.custom_build_dir]
+    enabled = true
+  [runners.docker]
+    tls_verify = false
+    image = "docker:stable"
+    privileged = true
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = false
+    volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
+    shm_size = 0

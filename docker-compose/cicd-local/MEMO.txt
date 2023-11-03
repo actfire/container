@@ -1,0 +1,23 @@
+啟動後, external_url 有改成 本機自訂的域名 (例 gitlab.me ), 改 gitlab.rb
+runner 那邊的對應要注意一下, 主要是本機在內網取得的IP
+
+config.toml
+本機 docker 環境執行
+記得加
+clone_url = "http://192.168.88.158:5080"
+
+
+重啟 gitlab 指令
+    gitlab-ctl reconfigure
+    gitlab-ctl restart
+
+
+Temp:
+
+http://192.168.88.158:5080
+http://192.168.249.30:5080
+glrt-FHDtPgDkZWmKGbg2Ggox
+
+gitlab.com: glrt-V4FCW4jkV5ABfMS-b3sy
+
+gitlab-runner register  --url https://gitlab.com  --token glrt-HAmSjwDPtCXnf5Vc6zAU
