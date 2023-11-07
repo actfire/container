@@ -5,7 +5,7 @@ volumes:
 
 services:
   jenkins:
-    image: actspace/myjenkins:0.0.1
+    image: actspace/myjenkins:0.0.2
     container_name: my_jenkins
     deploy:
       resources:
