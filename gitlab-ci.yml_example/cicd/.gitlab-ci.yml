@@ -1,0 +1,125 @@
+# TODO: 限定 main 分支
+# TODO: 必須是要是 after merge request 通過後
+# TODO: 成功或失敗 跑副程式(通知)
+
+default:
+  # 全域使用 docker runner
+  tags:
+    - docker
+
+# 官方默認預定義的5個階段（按順序）：.pre、build、test、deploy、.post
+# .pre .post 這兩個階段不用定義在 stages 也會執行
+stages:
+  - build
+  - notify
+  - deploy
+
+# 全域變數
+# variables:
+#   TEST_VAR: ''
+
+# 如果您想在建立合併請求時以及合併到主分支後運行管道
+workflow:
+  rules:
+    # 合併前觸發
+    # - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+    #   when: always 
+    # 合併後觸發
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TITLE =~ /^Merge\sbranch\s'dev'\sinto\s'main'/
+      when: always
+    - when: never
+
+# 可復用的任務
+.notify_sh:
+  script:
+    - |
+      echo "$LINE_MSG"
+      # curl -L 'https://notify-api.line.me/api/notify' -H 'Content-Type: application/x-www-form-urlencoded' \
+      # --header 'Authorization: Bearer WRJKhDvZvt5Ul316wtaaPZrZXRIG2UIQ27kG0zFd47y' \
+      # --data-urlencode "message=$LINE_MSG"
+
+pre-job:
+  stage: .pre
+  script:
+    - |
+      echo $CI_COMMIT_TAG
+      echo ======================= all env ===============================
+      env
+
+job_build:
+  image: actspace/my-node-18:0.0.1
+  stage: build
+  cache:
+    key:
+      files:
+        - package-lock.json
+      prefix: npm
+    paths:
+      - node_modules/
+    policy: pull
+  before_script:
+    - corepack disable
+    - echo -e "strict-ssl=false\nregistry=http://registry.npmjs.org/" > ~/.npmrc
+    - npm config set strict-ssl=false
+    - npm set registry http://registry.npmjs.org
+    - git config --global user.email "actfire@gmail.com"
+    - git config --global user.name "Andersen"
+  script:
+    - |
+      git branch --show-current
+      npm install
+      npx standard-version
+      git push --follow-tags http://root:$GIT_PUSH_SECRET@$CI_SERVER_HOST:$CI_SERVER_PORT/$CI_PROJECT_PATH.git HEAD:main
+      npm run build
+      VERSION=v$(jq -r .version package.json)
+      echo -e "VERSION=$VERSION" > deploy.env
+      zip -r express-ts_$VERSION.zip apps/*
+      mkdir backup
+      mv express-ts_$VERSION.zip backup/
+  artifacts:
+    reports:
+      dotenv: deploy.env
+    paths:
+      - apps
+      - backup
+    expire_in: 30 mins
+
+job_on_success:
+  image: alpine/curl:latest
+  extends: .notify_sh
+  variables:
+    LINE_MSG: '專案:$CI_PROJECT_NAME 編譯成功, pipeline: $CI_PIPELINE_ID'
+  stage: notify
+  needs: [job_build]
+  when: on_success
+
+job_on_fail:
+  image: alpine/curl:latest
+  extends: .notify_sh
+  variables:
+    LINE_MSG: '專案:$CI_PROJECT_NAME 編譯失敗, pipeline: $CI_PIPELINE_ID'
+  stage: notify
+  needs: [job_build]
+  when: on_failure
+
+deploy-job:
+  image: instrumentisto/rsync-ssh:latest
+  stage: deploy
+  before_script:
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo -e "StrictHostKeyChecking no\nUserKnownHostsFile /dev/null" > ~/.ssh/config
+  script:
+    - |
+      eval $(ssh-agent -s)
+      echo "備份檔案"
+      ssh-add <(echo "$BACKUP_SSHKEY")
+      rsync -vrzh --delete backup/express-ts_${VERSION}.zip file@file-server:/files/express-ts/
+      echo "佈署"
+      ssh-add <(echo "$DEPLOY_SSHKEY")
+      rsync -vrzh --delete apps/ node@node-server:/apps
+      ssh node@node-server pm2 restart /apps/pm2.json
+
+# CI 變數說明
+# https://docs.gitlab.cn/jh/ci/variables/predefined_variables.html
+# CI 變數重點 CI_MERGE_REQUEST_EVENT_TYPE
