@@ -43,7 +43,7 @@ services:
       resources:
         limits:
           cpus: '0.50'
-          memory: 200M
+          memory: 256M
     environment:
       - SSH_USER_1=nginx
       - SSH_GROUP_1=dev
@@ -66,7 +66,7 @@ services:
       resources:
         limits:
           cpus: '0.50'
-          memory: 200M
+          memory: 256M
     environment:
       - SSH_USER_1=file
       - SSH_GROUP_1=dev
@@ -103,7 +103,7 @@ services:
       resources:
         limits:
           cpus: '0.50'
-          memory: 1000M
+          memory: 1024M
     ports:
       - 13307:3306
     environment:
@@ -119,14 +119,14 @@ services:
   
   # Jenkins (use for backup file<git and sql>)
   my-jenkins:
-    image: actspace/myjenkins:0.0.1
+    image: actspace/myjenkins:0.0.2
     container_name: my-jenkins
     # restart: unless-stopped
     deploy:
       resources:
         limits:
           cpus: '1'
-          memory: 768M
+          memory: 1024M
     environment:
       JAVA_OPTS: '-Xms512m -Xmx1024m -Djava.awt.headless=true'
     ports:
