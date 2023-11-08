@@ -119,7 +119,7 @@ services:
   
   # Jenkins (use for backup file<git and sql>)
   my-jenkins:
-    image: actspace/myjenkins:0.0.2
+    image: actspace/myjenkins:0.0.3
     container_name: my-jenkins
     # restart: unless-stopped
     deploy:
