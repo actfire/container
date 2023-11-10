@@ -20,6 +20,8 @@ RUN set -uex; \
     apt-get install -y openssh-server; \
     apt-get install -y rsync; \
     apt-get install -y vim; \
+    # install Bun
+    curl -fsSL https://bun.sh/install | bash; \
     # install nodejs
     apt-get install -y ca-certificates curl gnupg; \
     mkdir -p /etc/apt/keyrings; \
