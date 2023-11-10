@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 services:
   GitLab-Server:
@@ -78,7 +78,7 @@ services:
 
   # node Server (Linux with novnc and node.js<PM2>)
   node-server:
-    image: actspace/my-node-server:0.0.5
+    image: actspace/my-node-server:0.0.6
     container_name: node-server
     # restart: unless-stopped
     environment:
