@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# 創立 root ssh 密鑰
+if [ ! -d "/root.ssh" ]; then
+  mkdir -p /root/.ssh
+  ssh-keygen -f /root/.ssh/id_rsa -N '' 
+  cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+  chmod 700 /root/.ssh/id_rsa
+  chmod 600 /root/.ssh/authorized_keys
+  mkdir -p /ssh/node/root
+  cp -r /root/.ssh/* /ssh/node/root
+fi
+
 index=1
 
 # 循環讀取使用者環境變數
@@ -29,8 +40,8 @@ for user in $(env | grep SSH_USER_); do
     echo "%$group ALL=(ALL) ALL" >> /etc/sudoers
 
     # 管理用, 非必要
-    mkdir -p /ssh/$username
-    cp -r /home/$username/.ssh/* /ssh/$username
+    mkdir -p /ssh/node/$username
+    cp -r /home/$username/.ssh/* /ssh/node/$username
   fi
   
   index=$(expr $index + 1)
