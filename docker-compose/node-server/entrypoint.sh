@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 創立 root ssh 密鑰
-if [ ! -d "/root.ssh" ]; then
+if [ ! -d "/root/.ssh" ]; then
   mkdir -p /root/.ssh
   ssh-keygen -f /root/.ssh/id_rsa -N '' 
   cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys

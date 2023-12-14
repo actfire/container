@@ -20,8 +20,6 @@ RUN set -uex; \
     apt-get install -y openssh-server; \
     apt-get install -y rsync; \
     apt-get install -y vim; \
-    # install Bun
-    curl -fsSL https://bun.sh/install | bash; \
     # install nodejs
     apt-get install -y ca-certificates curl gnupg; \
     mkdir -p /etc/apt/keyrings; \
@@ -34,7 +32,9 @@ RUN set -uex; \
     # update npm & install pnpm
     npm i -g npm && npm i -g pnpm; \
     # Install pm2
-    npm i -g --no-optional --no-shrinkwrap --no-package-lock pm2; \
+    # npm i -g --no-optional --no-shrinkwrap --no-package-lock pm2; \
+    # install Bun
+    # curl -fsSL https://bun.sh/install | bash; \
     # ssh setting
     mkdir /run/sshd; \
     # 建立 sshd 配置文件,允許 root 登入和 PasswordAuthentication

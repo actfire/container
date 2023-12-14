@@ -5,11 +5,13 @@ index=1
 # 循環讀取使用者環境變數
 for user in $(env | grep SSH_USER_); do
   username=$(eval echo "\${SSH_USER_$index}")
-  group=$(eval echo "\${SSH_GROUP_$index}")
+  group=$(eval echo "\${SSH_GROUP_$index:-'dev'}") # 沒給就加到 dev 群組
   password=$(eval echo "\${SSH_PASS_$index}")
 
   if [ ! -d "/home/$username" ]; then
-    groupadd $group 
+    if [ "$group" != "dev" ]; then
+      groupadd $group
+    fi
     useradd -g $group $username -m
     usermod --shell /bin/bash $username
     echo "$username:$password" | chpasswd

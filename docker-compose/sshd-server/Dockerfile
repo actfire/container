@@ -27,7 +27,14 @@ RUN DEBIAN_FRONTEND=noninteractive set -uex; \
     sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config; \
     # give exec permission
     chmod +x /entrypoint.sh; \
-    apt-get clean;
+    apt-get clean; \
+    # set project files folder and give group permission
+    mkdir /ProjectFiles; \
+    groupadd dev; \
+    chgrp dev /ProjectFiles; \
+    chmod g+rwx /ProjectFiles;
+
+
 
 # 開放埠號
 EXPOSE 22
