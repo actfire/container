@@ -1,0 +1,192 @@
+version: '3.8'
+
+services:
+  GitLab-Server:
+    hostname: 'gitlab.me'
+    image: 'gitlab/gitlab-ce:latest'
+    container_name: GitLab-Server
+    extra_hosts:
+      - 'gitlab.me:172.27.0.2'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.me:5080/'
+        nginx['listen_port'] = 80
+        gitlab_rails['gitlab_shell_ssh_port'] = 5022
+    networks:
+      default:
+        ipv4_address: 172.27.0.2
+    ports:
+      - 5080:80
+      - 5443:443
+      - '5022:22'
+    privileged: true
+    volumes:
+      - gitlabconfig:/etc/gitlab
+      - data:/var/opt/gitlab
+      - gitlablog:/var/log/gitlab
+    shm_size: '256m'
+  
+  GitLab-Runner:
+    image: gitlab/gitlab-runner:latest
+    container_name: GitLab-Runner
+    extra_hosts:
+      - 'gitlab.me:172.27.0.2' # 有固定環境的話，可以用
+    privileged: true
+    networks:
+      default:
+        ipv4_address: 172.27.0.3
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./Runner/Config:/etc/gitlab-runner
+    depends_on:
+      - GitLab-Server
+
+  # web server
+  nginx_sshd:
+    image: actspace/nginx-sshd:0.0.2
+    container_name: nginx_sshd
+    # restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+    environment:
+      - SSH_USER_1=web
+      - SSH_GROUP_1=dev
+      - SSH_PASS_1=oiceuthn
+    networks:
+      default:
+        ipv4_address: 172.27.0.4
+    volumes:
+      - ./www-data:/var/www # place your files for web here
+      - ./nginx-conf:/etc/nginx/conf.d # place provided nginx.conf here
+      - ./logs:/var/log/nginx
+      - ./ssh:/ssh
+    ports:
+      - 8000:80
+      - '8022:22'
+
+  # File Storage (SSH Server)
+  file-server:
+    image: actspace/my-sshder:0.0.11
+    container_name: file-server
+    # restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+    environment:
+      - SSH_USER_1=file
+      - SSH_GROUP_1=dev
+      - SSH_PASS_1=oiceuthn
+    networks:
+      default:
+        ipv4_address: 172.27.0.5
+    volumes:
+      - ./ssh:/ssh
+    ports:
+      - '2022:22'
+
+  # node Server (Linux with novnc and node.js<PM2>)
+  node-server:
+    image: actspace/my-node-server:0.0.9
+    container_name: node-server
+    # restart: unless-stopped
+    environment:
+      - SSH_USER_1=node
+      - SSH_GROUP_1=dev
+      - SSH_PASS_1=oiceuthn
+    networks:
+      default:
+        ipv4_address: 172.27.0.6
+    volumes:
+      - ./apps:/apps
+      - ./ssh:/ssh
+    ports:
+      - '2122:22'
+      - '3000:3000'
+    depends_on:
+      - mysql
+
+  # New Version MySQL (for backend)
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1024M
+    ports:
+      - 13307:3306
+    environment:
+      - MYSQL_DATABASE=nest-admin
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=0000
+      - MYSQL_ROOT_PASSWORD=test
+      - TZ=Asia/Taipei
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci #設置utf8字符集
+    networks:
+      default:
+        ipv4_address: 172.27.0.9
+    volumes:
+      - ./mysql/data/mysql:/var/lib/mysql
+      - ./mysql/deploy/sql/:/docker-entrypoint-initdb.d/ # 初始化的腳本，若 ./__data/mysql/ 文件夾存在數據，則不會執行初始化腳本
+  
+  redis:
+    image: redis:alpine
+    container_name: nest-admin-redis
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+    ports:
+      - '6379:6379'
+    command: >
+      --requirepass 123456
+    networks:
+      default:
+        ipv4_address: 172.27.0.7
+
+  # Jenkins
+  my-jenkins:
+    image: actspace/myjenkins:0.0.3
+    container_name: my-jenkins
+    extra_hosts:
+      - 'gitlab.me:172.27.0.2'
+    # restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+    environment:
+      JAVA_OPTS: '-Xms512m -Xmx1024m -Djava.awt.headless=true'
+    ports:
+      - '8888:8080'
+    networks:
+      default:
+        ipv4_address: 172.27.0.8
+    volumes:
+      - my-jenkins-home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  gitlabconfig:
+  gitlablog:
+  data:
+  my-jenkins-home:
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.27.0.0/16
+          gateway: 172.27.0.1
