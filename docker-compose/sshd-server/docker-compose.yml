@@ -6,7 +6,7 @@ services:
     container_name: sshd1
     # restart: unless-stopped
     environment:
-      - SSH_USER_1=admin
+      - SSH_USER_1=file
       - SSH_GROUP_1=dev
       - SSH_PASS_1=oiceuthn
     volumes:

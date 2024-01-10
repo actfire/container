@@ -5,7 +5,7 @@ volumes:
 
 services:
   jenkins:
-    image: actspace/myjenkins:0.0.3
+    image: actspace/myjenkins:0.0.4
     container_name: my_jenkins
     deploy:
       resources:
@@ -15,9 +15,10 @@ services:
       JAVA_OPTS: '-Xms512m -Xmx1024m -Djava.awt.headless=true'
     restart: unless-stopped
     ports:
-      - '8888:8080'
+      - '8080:8080'
     volumes:
       - my-jenkins-home:/var/jenkins_home
+      # 容器啟動後，請以 root 執行 chmod 777 /var/run/docker.sock，參考 README.md 說明
       - /var/run/docker.sock:/var/run/docker.sock
 
 # JAVA_OPTS: '-server -Xms1024m -Xmx2048m -Djava.awt.headless=true'
