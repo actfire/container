@@ -9,9 +9,6 @@
 - 只要以root身份在容器中執行以下命令即可
 
 ```shell
-# 以root進入容器
-docker exec -it -u root [container_id] bash
-
-# 執行 chmod
-chmod 777 /var/run/docker.sock
+# 容器給予 /var/run/docker.sock 權限 (測試Playwright才需要)
+docker exec -u root my-jenkins bash -c 'chown jenkins:jenkins /var/run/docker.sock && chmod 660 /var/run/docker.sock'
 ```

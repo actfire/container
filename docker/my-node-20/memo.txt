@@ -1,0 +1,2 @@
+docker build . -t actspace/my-node-20:0.0.1
+docker push actspace/my-node-20:0.0.1
