@@ -1,0 +1,13 @@
+services:
+  my-node-server:
+    image: actspace/node20-root-server:0.0.3
+    container_name: node20-root-server-test
+    restart: unless-stopped
+    environment:
+      - NODE_PATH=/apps/node/
+      - NODE_FILE=index.js
+    volumes:
+      - ./apps:/apps
+    ports:
+      - '2222:22'
+      - '3000:3000'
